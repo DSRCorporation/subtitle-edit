@@ -508,7 +508,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return paragraph;
         }
 
-        private static void ConvertParagraphNodeToTTMLNode(XmlNode node, XmlDocument ttmlXml, XmlNode ttmlNode)
+        protected static void ConvertParagraphNodeToTTMLNode(XmlNode node, XmlDocument ttmlXml, XmlNode ttmlNode)
         {
             foreach (XmlNode child in node.ChildNodes)
             {
