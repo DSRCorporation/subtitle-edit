@@ -28,6 +28,11 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                     NameTable nameTable = new NameTable();
                     namespaceManager = new XmlNamespaceManager(nameTable);
 
+                    namespaceManager.AddNamespace("ttml", TTMLNamespace);
+                    namespaceManager.AddNamespace("tts", TTMLStylingNamespace);
+                    namespaceManager.AddNamespace("ttp", TTMLParameterNamespace);
+                    namespaceManager.AddNamespace("ttm", TTMLMetadataNamespace);
+
                     namespaceManager.AddNamespace("itts", IMSCStylingNamespace);
                     namespaceManager.AddNamespace("ittp", IMSCParameterNamespace);
                     namespaceManager.AddNamespace("ittm", IMSCMetadataNamespace);
@@ -41,9 +46,73 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
         public override void LoadSubtitle(Subtitle subtitle, List<string> lines, string fileName)
         {
             base.LoadSubtitle(subtitle, lines, fileName);
+
+            foreach (Paragraph p in subtitle.Paragraphs)
+            {
+                bool forcedDisplay = false;
+                bool.TryParse(GetEffect(p, "itts:forcedDisplay"), out forcedDisplay);
+                p.Forced = forcedDisplay;
+            }
         }
 
         public override string ToText(Subtitle subtitle, string title)
+        {
+            XmlDocument resultXml = GenerateTemplate(title);
+            XmlElement div = resultXml.DocumentElement.SelectSingleNode("ttml:body/ttml:div", NamespaceManager) as XmlElement;
+
+            for (int pNum = 0; pNum < subtitle.Paragraphs.Count; pNum++)
+            {
+                Paragraph p = subtitle.Paragraphs[pNum];
+                string pId = "p" + pNum;
+                XmlElement pElement = GenerateParagraph(p, pId, resultXml);
+
+                div.AppendChild(pElement);
+            }
+
+            return ToUtf8XmlString(resultXml);
+        }
+
+        private XmlElement GenerateParagraph(Paragraph paragraph, string id, XmlDocument doc)
+        {
+            XmlElement pNode = doc.CreateElement("p", TTMLNamespace);
+
+            try     // Try to convert pararagraph to ttml
+            {
+                string text = string.Join("<br/>", paragraph.Text.SplitToLines());
+                XmlDocument paragraphContent = new XmlDocument();
+                paragraphContent.LoadXml(string.Format("<root>{0}</root>", text));
+                ConvertParagraphNodeToTTMLNode(paragraphContent.DocumentElement, doc, pNode);
+            }
+            catch  // Wrong markup, clear it
+            {
+                string text = Regex.Replace(paragraph.Text, "[<>]", "");
+                XmlText textNode = doc.CreateTextNode(paragraph.Text);
+                pNode.AppendChild(textNode);
+            }
+
+            // Common attributes
+            pNode.SetAttribute("xml:id", id);
+            pNode.SetAttribute("begin", ConvertToTimeString(paragraph.StartTime));
+            pNode.SetAttribute("end", ConvertToTimeString(paragraph.EndTime));
+
+            // Forced display
+            if (paragraph.Forced)
+            {
+                pNode.SetAttribute("itts:forcedDisplay", "true");
+            }
+
+            List<string> attributesToRemove = new List<string>() { "id" };
+
+            GetAllEffects(paragraph)
+                .Where(eff => pNode.Attributes[eff.Key] == null)
+                .Where(eff => !attributesToRemove.Contains(eff.Key))
+                .ToList()
+                .ForEach(eff => pNode.SetAttribute(eff.Key, eff.Value));
+
+            return pNode;
+        }
+
+        private XmlDocument GenerateTemplate(string title)
         {
             XmlDocument resultXml = new XmlDocument();
 
@@ -88,52 +157,16 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             XmlElement div = resultXml.CreateElement("div", TTMLNamespace);
             body.AppendChild(div);
 
-            for (int pNum = 0; pNum < subtitle.Paragraphs.Count; pNum++)
-            {
-                Paragraph paragrap = subtitle.Paragraphs[pNum];
-                XmlElement paragraphNode = resultXml.CreateElement("p", TTMLNamespace);
-
-                try     // Try to convert pararagraph to ttml
-                {
-                    string text = string.Join("<br/>", paragrap.Text.SplitToLines());
-                    XmlDocument paragraphContent = new XmlDocument();
-                    paragraphContent.LoadXml(string.Format("<root>{0}</root>", text));
-                    ConvertParagraphNodeToTTMLNode(paragraphContent.DocumentElement, resultXml, paragraphNode);
-                }
-                catch  // Wrong markup, clear it
-                {
-                    string text = Regex.Replace(paragrap.Text, "[<>]", "");
-                    XmlText textNode = resultXml.CreateTextNode(paragrap.Text);
-                    paragraphNode.AppendChild(textNode);
-                }
-
-                XmlAttribute start = resultXml.CreateAttribute("begin");
-                start.InnerText = ConvertToTimeString(paragrap.StartTime);
-                paragraphNode.Attributes.Append(start);
-
-                XmlAttribute id = resultXml.CreateAttribute("xml:id");
-                id.InnerText = "p" + pNum;
-                paragraphNode.Attributes.Append(id);
-
-                XmlAttribute end = resultXml.CreateAttribute("end");
-                end.InnerText = ConvertToTimeString(paragrap.EndTime);
-                paragraphNode.Attributes.Append(end);
-
-                div.AppendChild(paragraphNode);
-            }
-
-            return XmlDocumentToString(resultXml);
+            return resultXml;
         }
 
-        public string XmlDocumentToString(XmlDocument doc)
+        public static List<KeyValuePair<string, string>> GetAllEffects(Paragraph paragraph)
         {
-            using (var stringWriter = new StringWriter())
-            using (var xmlTextWriter = XmlWriter.Create(stringWriter))
-            {
-                doc.WriteTo(xmlTextWriter);
-                xmlTextWriter.Flush();
-                return stringWriter.GetStringBuilder().ToString();
-            }
+            return paragraph.Effect.Split('|')
+                .Select(s => s.Split('='))
+                .Where(pairArr => pairArr.Length == 2)
+                .Select(pairArr => new KeyValuePair<string, string>(pairArr[0], pairArr[1]))
+                .ToList();
         }
 
         public static new string SetExtra(Paragraph p)

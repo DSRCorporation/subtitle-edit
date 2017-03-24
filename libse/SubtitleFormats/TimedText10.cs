@@ -714,24 +714,16 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
                         p.Language = lang;
                     }
 
-                    // Saving attibutes
-                    List<string> effectsToSave = new List<string>();
-                    effectsToSave.Add("xml:space");
-                    effectsToSave.Add("tts:fontSize");
-                    effectsToSave.Add("tts:fontFamily");
-                    effectsToSave.Add("tts:backgroundColor");
-                    effectsToSave.Add("tts:color");
-                    effectsToSave.Add("tts:origin");
-                    effectsToSave.Add("tts:extent");
-                    effectsToSave.Add("tts:textAlign");
+                    // Saving all attibutes
 
-                    foreach (string effect in effectsToSave)
+                    foreach (XmlAttribute attr in node.Attributes)
                     {
-                        string value = LookupForAttribute(effect, node, nsmgr);
+                        string key = attr.Name;
+                        string value = attr.Value;
 
                         if (!string.IsNullOrWhiteSpace(value))
                         {
-                            SetEffect(p, effect, value);
+                            SetEffect(p, key, value);
                         }
                     }
 
@@ -876,7 +868,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             }
         }
 
-        private static string GetEffect(Paragraph paragraph, string tag)
+        protected static string GetEffect(Paragraph paragraph, string tag)
         {
             if (paragraph == null || paragraph.Effect == null)
             {
