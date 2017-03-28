@@ -835,7 +835,7 @@ namespace Nikse.SubtitleEdit.Core.SubtitleFormats
             return null;
         }
 
-        private static void SetEffect(Paragraph paragraph, string tag, string value)
+        protected static void SetEffect(Paragraph paragraph, string tag, string value)
         {
             if (string.IsNullOrEmpty(paragraph.Effect))
             {
