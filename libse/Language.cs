@@ -180,6 +180,7 @@ namespace Nikse.SubtitleEdit.Core
                 Advanced = "Advanced",
                 Style = "Style",
                 StyleLanguage = "Style / Language",
+                StyleLanguageForcedDisplay = "Style / Language / Forced display",
                 Character = "Character",
                 Class = "Class",
                 GeneralText = "General",

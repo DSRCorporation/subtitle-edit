@@ -472,6 +472,9 @@
             this.imageListPlayRate = new System.Windows.Forms.ImageList(this.components);
             this.timerTextUndo = new System.Windows.Forms.Timer(this.components);
             this.timerAlternateTextUndo = new System.Windows.Forms.Timer(this.components);
+            this.toolStripMenuItemForcedDisplay = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItemSetForcedDisplayTrue = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItemSetForcedDisplayFalse = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -2306,6 +2309,7 @@
             this.toolStripMenuItemSetLanguage,
             this.toolStripMenuItemWebVTT,
             this.toolStripMenuItemDelete,
+            this.toolStripMenuItemForcedDisplay,
             this.toolStripMenuItemInsertBefore,
             this.toolStripMenuItemInsertAfter,
             this.toolStripMenuItemInsertSubtitle,
@@ -2342,7 +2346,7 @@
             this.changeCasingForSelectedLinesToolStripMenuItem,
             this.toolStripMenuItemSaveSelectedLines});
             this.contextMenuStripListview.Name = "contextMenuStripListview";
-            this.contextMenuStripListview.Size = new System.Drawing.Size(285, 804);
+            this.contextMenuStripListview.Size = new System.Drawing.Size(285, 848);
             this.contextMenuStripListview.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.MenuClosed);
             this.contextMenuStripListview.Opening += new System.ComponentModel.CancelEventHandler(this.ContextMenuStripListviewOpening);
             this.contextMenuStripListview.Opened += new System.EventHandler(this.MenuOpened);
@@ -4587,6 +4591,29 @@
             this.timerAlternateTextUndo.Interval = 700;
             this.timerAlternateTextUndo.Tick += new System.EventHandler(this.TimerAlternateTextUndoTick);
             // 
+            // toolStripMenuItemForcedDisplay
+            // 
+            this.toolStripMenuItemForcedDisplay.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToolStripMenuItemSetForcedDisplayTrue,
+            this.ToolStripMenuItemSetForcedDisplayFalse});
+            this.toolStripMenuItemForcedDisplay.Name = "toolStripMenuItemForcedDisplay";
+            this.toolStripMenuItemForcedDisplay.Size = new System.Drawing.Size(284, 22);
+            this.toolStripMenuItemForcedDisplay.Text = "IMSC - set forced display";
+            // 
+            // ToolStripMenuItemSetForcedDisplayTrue
+            // 
+            this.ToolStripMenuItemSetForcedDisplayTrue.Name = "ToolStripMenuItemSetForcedDisplayTrue";
+            this.ToolStripMenuItemSetForcedDisplayTrue.Size = new System.Drawing.Size(152, 22);
+            this.ToolStripMenuItemSetForcedDisplayTrue.Text = "True";
+            this.ToolStripMenuItemSetForcedDisplayTrue.Click += new System.EventHandler(this.ToolStripMenuItemSetForcedDisplayTrue_Click);
+            // 
+            // ToolStripMenuItemSetForcedDisplayFalse
+            // 
+            this.ToolStripMenuItemSetForcedDisplayFalse.Name = "ToolStripMenuItemSetForcedDisplayFalse";
+            this.ToolStripMenuItemSetForcedDisplayFalse.Size = new System.Drawing.Size(152, 22);
+            this.ToolStripMenuItemSetForcedDisplayFalse.Text = "False";
+            this.ToolStripMenuItemSetForcedDisplayFalse.Click += new System.EventHandler(this.ToolStripMenuItemSetForcedDisplayFalse_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -5102,6 +5129,8 @@
         private System.Windows.Forms.ToolStripMenuItem netflixQualityCheckToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButtonNetflixQualityCheck;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemEdl;
-
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemForcedDisplay;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemSetForcedDisplayTrue;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemSetForcedDisplayFalse;
     }
 }

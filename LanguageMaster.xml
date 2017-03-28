@@ -67,6 +67,7 @@
     <Advanced>Advanced</Advanced>
     <Style>Style</Style>
     <StyleLanguage>Style / Language</StyleLanguage>
+    <StyleLanguageForcedDisplay>Style / Language / Forced display</StyleLanguageForcedDisplay>
     <Character>Character</Character>
     <Class>Class</Class>
     <GeneralText>General</GeneralText>

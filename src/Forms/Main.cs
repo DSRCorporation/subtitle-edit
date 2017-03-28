@@ -3858,6 +3858,8 @@ namespace Nikse.SubtitleEdit.Forms
                         SubtitleListview1.ShowExtraColumn(_languageGeneral.Class);
                     else if (formatType == typeof(TimedText10) || formatType == typeof(ItunesTimedText))
                         SubtitleListview1.ShowExtraColumn(_languageGeneral.StyleLanguage);
+                    else if (formatType == typeof(IMSC10))
+                        SubtitleListview1.ShowExtraColumn(_languageGeneral.StyleLanguageForcedDisplay);
                     else if (format.Name == "Nuendo")
                         SubtitleListview1.ShowExtraColumn(_languageGeneral.Character);
                     else
@@ -6284,6 +6286,7 @@ namespace Nikse.SubtitleEdit.Forms
             var format = GetCurrentSubtitleFormat();
             var formatType = format.GetType();
             toolStripMenuItemSetLanguage.Visible = false;
+            toolStripMenuItemForcedDisplay.Visible = false;
             if ((formatType == typeof(AdvancedSubStationAlpha) || formatType == typeof(SubStationAlpha)) && SubtitleListview1.SelectedItems.Count > 0)
             {
                 toolStripMenuItemWebVTT.Visible = false;
@@ -6395,6 +6398,11 @@ namespace Nikse.SubtitleEdit.Forms
                 setStylesForSelectedLinesToolStripMenuItem.Visible = false;
                 toolStripMenuItemAssStyles.Visible = false;
                 toolStripMenuItemWebVTT.Visible = false;
+            }
+
+            if (formatType == typeof(IMSC10))
+            {
+                toolStripMenuItemForcedDisplay.Visible = true;
             }
 
             toolStripMenuItemGoogleMicrosoftTranslateSelLine.Visible = false;
@@ -20809,6 +20817,26 @@ namespace Nikse.SubtitleEdit.Forms
         private void toolStripButtonNetflixGlyphCheck_Click(object sender, EventArgs e)
         {
             NetflixGlyphCheck();
+        }
+
+        private void SetForcedDisplayForSelectedParagraphs(bool forced)
+        {
+            foreach (int index in SubtitleListview1.SelectedIndices)
+            {
+                _subtitle.Paragraphs[index].Forced = forced;
+                _subtitle.Paragraphs[index].Extra = IMSC10.SetExtra(_subtitle.Paragraphs[index]);
+                SubtitleListview1.SetExtraText(index, _subtitle.Paragraphs[index].Extra, SubtitleListview1.ForeColor);
+            }
+        }
+
+        private void ToolStripMenuItemSetForcedDisplayTrue_Click(object sender, EventArgs e)
+        {
+            SetForcedDisplayForSelectedParagraphs(true);
+        }
+
+        private void ToolStripMenuItemSetForcedDisplayFalse_Click(object sender, EventArgs e)
+        {
+            SetForcedDisplayForSelectedParagraphs(false);
         }
     }
 }

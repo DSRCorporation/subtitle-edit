@@ -250,6 +250,9 @@ namespace Nikse.SubtitleEdit.Core
                 case "General/StyleLanguage":
                     language.General.StyleLanguage = reader.Value;
                     break;
+                case "General/StyleLanguageForcedDisplay":
+                    language.General.StyleLanguageForcedDisplay = reader.Value;
+                    break;
                 case "General/Character":
                     language.General.Character = reader.Value;
                     break;

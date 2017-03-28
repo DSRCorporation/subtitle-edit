@@ -71,6 +71,7 @@
             public string Advanced { get; set; }
             public string Style { get; set; }
             public string StyleLanguage { get; set; }
+            public string StyleLanguageForcedDisplay { get; set; }
             public string Character { get; set; }
             public string Class { get; set; }
             public string GeneralText { get; set; }
